@@ -35,12 +35,16 @@ __decorate([
 ], Post.prototype, "updatedAt", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
+    (0, core_1.Property)({ type: 'text', unique: true }),
+    __metadata("design:type", String)
+], Post.prototype, "username", void 0);
+__decorate([
     (0, core_1.Property)({ type: 'text' }),
     __metadata("design:type", String)
-], Post.prototype, "title", void 0);
+], Post.prototype, "password", void 0);
 Post = __decorate([
     (0, type_graphql_1.ObjectType)(),
     (0, core_1.Entity)()
 ], Post);
 exports.Post = Post;
-//# sourceMappingURL=Post.js.map
+//# sourceMappingURL=User.js.map
