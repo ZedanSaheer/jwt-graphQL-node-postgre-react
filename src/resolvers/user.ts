@@ -1,5 +1,5 @@
 import { MyContext } from "src/types";
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Resolver } from "type-graphql";
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import argon2 from "argon2"
 import { User } from "../entities/User";
 
@@ -30,6 +30,19 @@ class UserResponse{
 
 @Resolver()
 export class UserResolver {
+
+    @Query(()=>User,{nullable:true})
+    async me(
+        @Ctx(){req,em}:MyContext
+    ){
+        if(!req.session.userId){
+            return null
+        }
+
+        const user = await em.findOne(User,{id:req.session.userId});
+        return user;
+    }
+
     @Mutation(()=>UserResponse)
     async register(
         @Arg('options') options : UsernameAndPasswordInput,
@@ -40,7 +53,7 @@ export class UserResolver {
                 errors:[
                     {
                         field:"username",
-                        message : "lenght must be greater than 2"
+                        message : "Lenght must be greater than 2"
                     }
                 ]
             }
@@ -50,7 +63,7 @@ export class UserResolver {
                 errors:[
                     {
                         field:"password",
-                        message : "lenght must be greater than 3"
+                        message : "Lenght must be greater than 3"
                     }
                 ]
             }
@@ -62,11 +75,11 @@ export class UserResolver {
         await em.persistAndFlush(user);
        } catch (error) {
            //duplicate user
-          if(error.code==='23505' || error.detail.includes("already exists")){
+          if(error.code==='23505' || error.detail.includes("Already exists")){
               return {
                   errors:[{
                       field:"username",
-                      message:"username already in use"
+                      message:"Username already in use"
                   }]
               }
           }
@@ -77,14 +90,14 @@ export class UserResolver {
     @Mutation(()=>UserResponse)
     async login(
         @Arg('options') options : UsernameAndPasswordInput,
-        @Ctx() {em} : MyContext
+        @Ctx() {em,req} : MyContext
     ): Promise<UserResponse>{
         const user = await em.findOne(User,{username:options.username.toLowerCase()});
         if(!user){
             return{
                 errors:[{
                     field : 'username'
-                    ,message: 'username does not exist!'
+                    ,message: 'Username does not exist!'
                 }]
             }
         }
@@ -93,10 +106,12 @@ export class UserResolver {
             return{
                 errors:[{
                     field : 'password'
-                    ,message: 'password does not match!'
+                    ,message: 'Password does not match!'
                 }]
             }
         }
+
+        req.session.userId = user.id;
 
         return {
             user,

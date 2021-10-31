@@ -59,13 +59,20 @@ UserResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], UserResponse);
 let UserResolver = class UserResolver {
+    async me({ req, em }) {
+        if (!req.session.userId) {
+            return null;
+        }
+        const user = await em.findOne(User_1.User, { id: req.session.userId });
+        return user;
+    }
     async register(options, { em }) {
         if (options.username.length <= 2) {
             return {
                 errors: [
                     {
                         field: "username",
-                        message: "lenght must be greater than 2"
+                        message: "Lenght must be greater than 2"
                     }
                 ]
             };
@@ -75,7 +82,7 @@ let UserResolver = class UserResolver {
                 errors: [
                     {
                         field: "password",
-                        message: "lenght must be greater than 3"
+                        message: "Lenght must be greater than 3"
                     }
                 ]
             };
@@ -86,24 +93,24 @@ let UserResolver = class UserResolver {
             await em.persistAndFlush(user);
         }
         catch (error) {
-            if (error.code === '23505' || error.detail.includes("already exists")) {
+            if (error.code === '23505' || error.detail.includes("Already exists")) {
                 return {
                     errors: [{
                             field: "username",
-                            message: "username already in use"
+                            message: "Username already in use"
                         }]
                 };
             }
         }
         return { user, };
     }
-    async login(options, { em }) {
+    async login(options, { em, req }) {
         const user = await em.findOne(User_1.User, { username: options.username.toLowerCase() });
         if (!user) {
             return {
                 errors: [{
                         field: 'username',
-                        message: 'username does not exist!'
+                        message: 'Username does not exist!'
                     }]
             };
         }
@@ -112,15 +119,23 @@ let UserResolver = class UserResolver {
             return {
                 errors: [{
                         field: 'password',
-                        message: 'password does not match!'
+                        message: 'Password does not match!'
                     }]
             };
         }
+        req.session.userId = user.id;
         return {
             user,
         };
     }
 };
+__decorate([
+    (0, type_graphql_1.Query)(() => User_1.User, { nullable: true }),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "me", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('options')),
