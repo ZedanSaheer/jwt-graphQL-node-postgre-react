@@ -19,7 +19,6 @@ const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
 const main = async () => {
     const orm = await core_1.MikroORM.init(mikro_orm_config_1.default);
-    await orm.getMigrator().up();
     const app = (0, express_1.default)();
     const redisClient = redis_1.default.createClient();
     const RedisStore = (0, connect_redis_1.default)(express_session_1.default);
@@ -28,7 +27,7 @@ const main = async () => {
         credentials: true,
     }));
     app.use((0, express_session_1.default)({
-        name: "qid",
+        name: constants_1.COOKIE_NAME,
         store: new RedisStore({
             client: redisClient,
             disableTouch: true,

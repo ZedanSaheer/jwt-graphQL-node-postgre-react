@@ -12,11 +12,11 @@ import redis from "redis";
 import session from "express-session"
 import connectRedis from "connect-redis"
 import cors from "cors"
+/* import { sendMail } from "./util/sendEmail"; */
 
 
 const main = async () => {
     const orm = await MikroORM.init(microConfig);
-    await orm.getMigrator().up();
     const app = express();
     const redisClient = redis.createClient();
     const RedisStore = connectRedis(session);
