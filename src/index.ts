@@ -8,9 +8,9 @@ import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
-import redis from "redis";
 import session from "express-session"
 import connectRedis from "connect-redis"
+import Redis from "ioredis";
 import cors from "cors"
 /* import { sendMail } from "./util/sendEmail"; */
 
@@ -18,7 +18,7 @@ import cors from "cors"
 const main = async () => {
     const orm = await MikroORM.init(microConfig);
     const app = express();
-    const redisClient = redis.createClient();
+    const redis = new Redis();
     const RedisStore = connectRedis(session);
 
     app.use(cors({
@@ -31,7 +31,7 @@ const main = async () => {
         session({
             name: COOKIE_NAME,
             store: new RedisStore({
-                client: redisClient,
+                client: redis,
                 disableTouch: true,
                 disableTTL: true
             }),
@@ -49,7 +49,7 @@ const main = async () => {
         })
     )
 
-    redisClient.on('error', (err) => console.log('Redis Client Error', err));
+    redis.on('error', (err) => console.log('Redis Client Error', err));
 
 
     const apolloServer = new ApolloServer({
@@ -57,7 +57,7 @@ const main = async () => {
             resolvers: [HelloResolver, PostResolver, UserResolver],
             validate: false,
         }),
-        context: ({ req, res }) => ({ em: orm.em, req, res }),
+        context: ({ req, res }) => ({ em: orm.em, req, res,Redis }),
     })
 
     await apolloServer.applyMiddleware({ app ,
