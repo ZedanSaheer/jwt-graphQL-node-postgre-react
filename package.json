@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@mikro-orm/cli": "^4.5.9",
-    "@mikro-orm/core": "^4.5.9",
     "@mikro-orm/migrations": "^4.5.9",
     "@mikro-orm/postgresql": "^4.5.9",
     "@types/argon2": "^0.15.0",
@@ -56,6 +55,7 @@
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
+    "typeorm": "^0.2.38",
     "uuid": "^8.3.2"
   },
   "mikro-orm": {
