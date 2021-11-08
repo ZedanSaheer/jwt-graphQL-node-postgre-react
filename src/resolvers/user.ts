@@ -134,6 +134,7 @@ export class UserResolver {
         if (errors) {
             return { errors };
         }
+        
         const hasedPass = await argon2.hash(options.password);
         let user;
         try {

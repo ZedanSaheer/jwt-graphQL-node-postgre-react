@@ -9,8 +9,7 @@
     "start": "ts-node src/index.ts",
     "dev-t": "nodemon ts-node src/index.ts",
     "start-n": "node dist/index.js",
-    "dev": "nodemon node dist/index.js",
-    "create:migration": "mikro-orm migration:create"
+    "dev": "nodemon node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -37,9 +36,6 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.5.9",
-    "@mikro-orm/migrations": "^4.5.9",
-    "@mikro-orm/postgresql": "^4.5.9",
     "@types/argon2": "^0.15.0",
     "@types/cors": "^2.8.12",
     "apollo-server-express": "^2.25.2",
