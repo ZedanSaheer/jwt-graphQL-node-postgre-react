@@ -62,13 +62,16 @@ let UserResolver = class UserResolver {
                 ]
             };
         }
-        const userId = await redis.get(constants_1.FORGET_PASSWORD_PREFIX + token);
+        const key = constants_1.FORGET_PASSWORD_PREFIX + token;
+        const userId = await redis.get(key);
+        console.log(userId);
+        console.log(key);
         if (!userId) {
             return {
                 errors: [
                     {
                         field: "token",
-                        message: "expired token , please try again!"
+                        message: "Expired token , please try again!"
                     },
                 ]
             };
@@ -79,7 +82,7 @@ let UserResolver = class UserResolver {
                 errors: [
                     {
                         field: "token",
-                        message: "user no longer exists"
+                        message: "User no longer exists"
                     },
                 ]
             };
@@ -95,7 +98,7 @@ let UserResolver = class UserResolver {
             return true;
         }
         const token = (0, uuid_1.v4)();
-        await redis.set(constants_1.FORGET_PASSWORD_PREFIX + token, user.id, 'ex', 1000 * 60 * 60 * 24 * 3);
+        await redis.set(constants_1.FORGET_PASSWORD_PREFIX + token, user.id);
         await (0, sendEmail_1.sendMail)(email, `<a href="http://localhost:3000/change-password/${token}">Reset Password </a>`);
         return true;
     }

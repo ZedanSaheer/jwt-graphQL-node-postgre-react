@@ -44,14 +44,19 @@ export class UserResolver {
                 ]
             }
         }
+        const key = FORGET_PASSWORD_PREFIX+token;
+        const userId = await redis.get(key);
 
-        const userId = await redis.get(FORGET_PASSWORD_PREFIX + token);
+        console.log(userId);
+        console.log(key);
+        
+
         if (!userId) {
             return {
                 errors: [
                     {
                         field: "token",
-                        message: "expired token , please try again!"
+                        message: "Expired token , please try again!"
                     },
                 ]
             }
@@ -64,7 +69,7 @@ export class UserResolver {
                 errors: [
                     {
                         field: "token",
-                        message: "user no longer exists"
+                        message: "User no longer exists"
                     },
                 ]
             }
@@ -85,12 +90,13 @@ export class UserResolver {
         if (!user) {
             return true;
         }
-
+        
         const token = v4();
 
-        await redis.set(FORGET_PASSWORD_PREFIX + token, user.id, 'ex', 1000 * 60 * 60 * 24 * 3);
+        await redis.set(FORGET_PASSWORD_PREFIX+token, user.id, 'ex', 1000 * 60 * 60 * 24 * 3);
 
-        await sendMail(email, `<a href="http://localhost:3000/change-password/${token}">Reset Password </a>`)
+        await sendMail(email, `<a href="http://localhost:3000/change-password/${token}">Reset Password </a>`);
+
         return true;
     }
 

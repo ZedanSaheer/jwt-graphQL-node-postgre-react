@@ -49,7 +49,7 @@ const main = async () => {
             resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver],
             validate: false,
         }),
-        context: ({ req, res }) => ({ em: orm.em, req, res, Redis: ioredis_1.default }),
+        context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
     });
     await apolloServer.applyMiddleware({ app,
         cors: false,
