@@ -15,7 +15,10 @@ class PostInput{
 export class PostResolver {
 
     @Query(() => [Post])
-    async posts(): Promise<Post[]> {
+    async posts(
+        @Arg('limit') limit : number,
+        @Arg('offset') offset : number
+    ): Promise<Post[]> {
         return Post.find();
     }
 
