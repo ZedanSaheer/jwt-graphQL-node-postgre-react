@@ -65,8 +65,6 @@ let UserResolver = class UserResolver {
         }
         const key = constants_1.FORGET_PASSWORD_PREFIX + token;
         const userId = await redis.get(key);
-        console.log(userId);
-        console.log(key);
         if (!userId) {
             return {
                 errors: [
